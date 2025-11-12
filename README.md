@@ -198,19 +198,19 @@ pytest -q tests/unit
 
 Build the SAM application (containerized build recommended):
 ```bash
-sam build --use-container
+sam build -t infra/template.yaml --use-container
 ```
 
 ### 4. Run locally
 Run the API locally (SAM local; if using LocalStack, point calls to LocalStack DynamoDB):
 Option A — host SAM available:
 ```bash
-sam local start-api --env-vars infra/env.dev.json --port 3000
+sam local start-api -t infra/template.yaml --env-vars infra/env.dev.json --port 3000
 ```
 Option B — run inside build container:
 ```bash
 docker run --rm -v "$(pwd)":/workspace -w /workspace public.ecr.aws/sam-cli-build-image-python3.11 \
-  sh -c "sam local start-api --env-vars infra/env.dev.json --host 0.0.0.0 --port 3000"
+  sh -c "sam local start-api -t infra/template.yaml --env-vars infra/env.dev.json --host 0.0.0.0 --port 3000"
 ```
 
 Validate gen-text endpoint (example):
@@ -227,7 +227,7 @@ aws --endpoint-url=$AWS_ENDPOINT_URL dynamodb get-item --table-name genai-prompt
 
 ### 5. Deploy to AWS (Optional)
 ```bash
-sam build
+sam build -t infra/template.yaml
 sam deploy --stack-name ${STACK_NAME} --capabilities CAPABILITY_NAMED_IAM --parameter-overrides Stage=${STAGE}
 ```
 Get API endpoint from CloudFormation outputs:

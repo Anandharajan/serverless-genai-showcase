@@ -13,6 +13,7 @@ env:
   BASE_URL: http://127.0.0.1:3000
   GENAI_LOCAL_ONLY: "1"
   SAM_CLI_TELEMETRY: "0"
+  SAM_TEMPLATE: infra/template.yaml
 
 jobs:
   run-smoke-test:
@@ -33,10 +34,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
       - name: Build application
-        run: sam build
+        run: sam build -t $SAM_TEMPLATE
       - name: Launch SAM local API
         run: |
-          sam local start-api --env-vars infra/env.dev.json > sam-api.log 2>&1 &
+          sam local start-api -t $SAM_TEMPLATE --env-vars infra/env.dev.json > sam-api.log 2>&1 &
           echo $! > sam.pid
           for i in {1..30}; do
             if curl -s http://127.0.0.1:3000/ >/dev/null 2>&1; then
