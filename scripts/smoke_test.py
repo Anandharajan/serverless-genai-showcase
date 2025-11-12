@@ -6,6 +6,22 @@ import requests
 from botocore.config import Config
 
 
+def trace_required() -> bool:
+    flag = os.environ.get("SMOKE_REQUIRE_TRACE", "")
+    return flag.lower() in {"1", "true", "yes"}
+
+
+def assert_trace_header(response: requests.Response) -> None:
+    has_trace = "X-Amzn-Trace-Id" in response.headers or "X-Trace-Id" in response.headers
+    if has_trace:
+        print("Trace ID found in headers.")
+    elif not trace_required():
+        print("Trace header missing (expected in AWS but optional for local runs).")
+        return
+    if not has_trace:
+        raise AssertionError("Trace header not found in response headers")
+
+
 def should_skip_dynamo() -> bool:
     """Return True when DynamoDB validation should be skipped."""
     flag = os.environ.get("SMOKE_SKIP_DYNAMO", "").lower()
@@ -33,8 +49,7 @@ def main():
         response.raise_for_status()
         print("/v1/gen-text PASSED")
         print(response.json())
-        assert "X-Amzn-Trace-Id" in response.headers or "X-Trace-Id" in response.headers
-        print("Trace ID found in headers.")
+        assert_trace_header(response)
     except (requests.exceptions.RequestException, AssertionError) as e:
         print(f"/v1/gen-text FAILED: {e}")
         sys.exit(1)
