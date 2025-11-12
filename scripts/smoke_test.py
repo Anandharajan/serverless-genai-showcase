@@ -1,8 +1,18 @@
-import sys
-import requests
 import os
+import sys
+
 import boto3
+import requests
 from botocore.config import Config
+
+
+def should_skip_dynamo() -> bool:
+    """Return True when DynamoDB validation should be skipped."""
+    flag = os.environ.get("SMOKE_SKIP_DYNAMO", "").lower()
+    if flag in {"1", "true", "yes"}:
+        return True
+    return os.environ.get("GENAI_LOCAL_ONLY") == "1"
+
 
 def main():
     if len(sys.argv) < 2:
@@ -61,29 +71,38 @@ def main():
 
 
     # 4. Check DynamoDB for the created item
-    print("\nChecking DynamoDB for created item...")
-    try:
-        # Assuming localstack is running
-        endpoint_url = f"http://localhost:{os.environ.get('LOCALSTACK_EDGE_PORT', '4566')}"
-        config = Config(
-            region_name = os.environ.get('AWS_REGION', 'ap-south-1'),
-            signature_version = 'v4',
-            retries = {
-                'max_attempts': 10,
-                'mode': 'standard'
-            }
-        )
-        dynamodb = boto3.client('dynamodb', endpoint_url=endpoint_url, config=config, aws_access_key_id='test', aws_secret_access_key='test')
-        item = dynamodb.get_item(
-            TableName='genai-prompt-dev',
-            Key={'requestId': {'S': request_id}}
-        )
-        assert 'Item' in item
-        print("DynamoDB check PASSED")
-        print(item['Item'])
-    except Exception as e:
-        print(f"DynamoDB check FAILED: {e}")
-        sys.exit(1)
+    if should_skip_dynamo():
+        print("\nSkipping DynamoDB check because GENAI_LOCAL_ONLY/SMOKE_SKIP_DYNAMO is enabled.")
+    else:
+        print("\nChecking DynamoDB for created item...")
+        try:
+            # Assuming localstack is running
+            endpoint_url = f"http://localhost:{os.environ.get('LOCALSTACK_EDGE_PORT', '4566')}"
+            config = Config(
+                region_name=os.environ.get('AWS_REGION', 'ap-south-1'),
+                signature_version='v4',
+                retries={
+                    'max_attempts': 10,
+                    'mode': 'standard'
+                }
+            )
+            dynamodb = boto3.client(
+                'dynamodb',
+                endpoint_url=endpoint_url,
+                config=config,
+                aws_access_key_id='test',
+                aws_secret_access_key='test'
+            )
+            item = dynamodb.get_item(
+                TableName='genai-prompt-dev',
+                Key={'requestId': {'S': request_id}}
+            )
+            assert 'Item' in item
+            print("DynamoDB check PASSED")
+            print(item['Item'])
+        except Exception as e:
+            print(f"DynamoDB check FAILED: {e}")
+            sys.exit(1)
 
     print("\nSmoke test completed successfully!")
 

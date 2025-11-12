@@ -14,6 +14,10 @@
 - Update the `ci` workflow to mirror the local commands (`python -m ruff`, `python -m pytest`, `sam build`) and add a `sam local invoke` or smoke-test step gated on the LocalStack container.
 - Once the local API is stable, finish the `ci-ops` backlog: wire the deploy workflow outputs into smoke tests, document the promotion checklist, and flip feature flags for production rollout.
 
+## GitHub-hosted demo
+- Use the [Demo workflow](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/demo.yml) to spin up the SAM API inside GitHub Actions and run `scripts/smoke_test.py` against the `/v1/gen-text`, `/v1/rag-query`, and `/v1/agent-orchestrate` routes.
+- From the **Actions** tab choose **Demo → Run workflow**, then watch the `Run local SAM demo` job for logs or download the `demo-sam-api-log` artifact for the captured API output.
+
 ---
 
 Production-minded, serverless reference implementation that highlights LLM adapters, Retrieval Augmented Generation (RAG), lightweight agent orchestration, and governance guardrails with the AWS SAM CLI.
