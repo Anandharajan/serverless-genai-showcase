@@ -65,4 +65,10 @@ jobs:
         if: always()
         run: |
           if [ -f sam.pid ]; then
-            kill $(cat sam.pid) || true
+            PID=$(cat sam.pid)
+            if kill "$PID" >/dev/null 2>&1; then
+              echo "Stopped SAM process $PID"
+            else
+              echo "SAM process $PID already stopped"
+            fi
+          fi
