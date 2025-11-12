@@ -1,0 +1,318 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless Generative AI Showcase - SAM template
+
+Parameters:
+  StageName:
+    Type: String
+    Default: dev
+    AllowedPattern: "^[a-z0-9-]+$"
+    Description: Deployment stage name used for tagging and HTTP API stage.
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 30
+    MemorySize: 256
+    Tracing: Active
+    CodeUri: ../
+    Environment:
+      Variables:
+        STAGE: !Ref StageName
+        PROMPT_TABLE: !Ref PromptHistoryTable
+        MODEL_TABLE: !Ref ModelMetadataTable
+        AGENT_TABLE: !Ref AgentLifecycleTable
+        RETRIEVAL_TABLE: !Ref RetrievalIndexTable
+        DEFAULT_MODEL_ID: primary
+
+Resources:
+  GenAIHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref StageName
+      Description: HTTP API entrypoint for the Generative AI showcase.
+
+  PromptHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${StageName}-PromptHistory"
+      AttributeDefinitions:
+        - AttributeName: requestId
+          AttributeType: S
+        - AttributeName: userKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: requestId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: UserHistory
+          KeySchema:
+            - AttributeName: userKey
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  ModelMetadataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${StageName}-ModelMetadata"
+      AttributeDefinitions:
+        - AttributeName: modelId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: modelId
+          KeyType: HASH
+
+  AgentLifecycleTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${StageName}-AgentLifecycle"
+      AttributeDefinitions:
+        - AttributeName: agentRunId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: agentRunId
+          KeyType: HASH
+
+  RetrievalIndexTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${StageName}-RetrievalIndex"
+      AttributeDefinitions:
+        - AttributeName: docId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: docId
+          KeyType: HASH
+
+  GenTextFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: services.functions.gen_text.app.lambda_handler
+      Description: Text generation and summarization endpoint.
+      Events:
+        TextRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GenAIHttpApi
+            Path: /text
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+          - Effect: Allow
+            Action:
+              - "cloudwatch:PutMetricData"
+            Resource: "*"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PromptHistoryTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ModelMetadataTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AgentLifecycleTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RetrievalIndexTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "xray:PutTraceSegments"
+                - "xray:PutTelemetryRecords"
+              Resource: "*"
+
+  RagQueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: services.functions.rag_query.app.lambda_handler
+      Description: Retrieval augmented QA endpoint.
+      Events:
+        RagRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GenAIHttpApi
+            Path: /rag
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+          - Effect: Allow
+            Action:
+              - "cloudwatch:PutMetricData"
+            Resource: "*"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PromptHistoryTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ModelMetadataTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AgentLifecycleTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RetrievalIndexTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "xray:PutTraceSegments"
+                - "xray:PutTelemetryRecords"
+              Resource: "*"
+
+  AgentOrchestratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: services.functions.agent_orchestrator.app.lambda_handler
+      Description: Multi-agent planner/executor endpoint.
+      Events:
+        AgentRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GenAIHttpApi
+            Path: /agents
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+          - Effect: Allow
+            Action:
+              - "cloudwatch:PutMetricData"
+            Resource: "*"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PromptHistoryTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ModelMetadataTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AgentLifecycleTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RetrievalIndexTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "xray:PutTraceSegments"
+                - "xray:PutTelemetryRecords"
+              Resource: "*"
+
+  ModelTrainerHookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: services.functions.model_trainer_hook.app.lambda_handler
+      Description: Fine-tune orchestration hook (Step Functions entry).
+      Events:
+        TrainerRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GenAIHttpApi
+            Path: /train
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+          - Effect: Allow
+            Action:
+              - "cloudwatch:PutMetricData"
+            Resource: "*"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PromptHistoryTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ModelMetadataTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AgentLifecycleTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RetrievalIndexTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "xray:PutTraceSegments"
+                - "xray:PutTelemetryRecords"
+              Resource: "*"
+
+  AdminFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: services.functions.admin.app.lambda_handler
+      Description: Model registry and governance admin endpoint.
+      Events:
+        AdminRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GenAIHttpApi
+            Path: /models
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+          - Effect: Allow
+            Action:
+              - "cloudwatch:PutMetricData"
+            Resource: "*"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PromptHistoryTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ModelMetadataTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AgentLifecycleTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RetrievalIndexTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "xray:PutTraceSegments"
+                - "xray:PutTelemetryRecords"
+              Resource: "*"
+
+  FineTuneStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: !Sub "${StageName}-GenAITrainer"
+      RoleArn: !GetAtt TrainerStateMachineRole.Arn
+      Definition:
+        Comment: Minimal placeholder state machine that invokes the model trainer Lambda.
+        StartAt: SubmitJob
+        States:
+          SubmitJob:
+            Type: Task
+            Resource: !GetAtt ModelTrainerHookFunction.Arn
+            ResultPath: $.trainerResult
+            Next: Complete
+          Complete:
+            Type: Succeed
+
+  TrainerStateMachineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${StageName}-TrainerStateMachineRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: InvokeTrainerLambda
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: !GetAtt ModelTrainerHookFunction.Arn
+
+Outputs:
+  ApiEndpoint:
+    Description: HTTPS endpoint for the showcase API
+    Value: !Sub "https://${GenAIHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+  PromptHistoryTableName:
+    Description: DynamoDB Prompt history table
+    Value: !Ref PromptHistoryTable
+  ModelMetadataTableName:
+    Description: DynamoDB model metadata table
+    Value: !Ref ModelMetadataTable
+  AgentLifecycleTableName:
+    Description: DynamoDB agent lifecycle table
+    Value: !Ref AgentLifecycleTable
+  RetrievalIndexTableName:
+    Description: DynamoDB retrieval index table
+    Value: !Ref RetrievalIndexTable
+  FineTuneStateMachineArn:
+    Description: Step Functions ARN for trainer orchestration
+    Value: !Ref FineTuneStateMachine

@@ -1,0 +1,52 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: "Deployment stage (dev|prod)"
+        required: true
+        default: "prod"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+      - name: Build
+        run: sam build --template-file infra/template.yaml
+      - name: Deploy
+        env:
+          STAGE: ${{ inputs.stage }}
+        run: |
+          sam deploy \
+            --stack-name genai-${{ inputs.stage }} \
+            --template-file infra/template.yaml \
+            --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+            --parameter-overrides StageName=${{ inputs.stage }}
+      - name: Fetch endpoint
+        id: outputs
+        run: |
+          API=$(aws cloudformation describe-stacks \
+            --stack-name genai-${{ inputs.stage }} \
+            --query "Stacks[0].Outputs[?OutputKey=='ApiEndpoint'].OutputValue" \
+            --output text)
+          echo "api=${API}" >> "$GITHUB_OUTPUT"
+      - name: Smoke test
+        env:
+          API_BASE_URL: ${{ steps.outputs.outputs.api }}
+        run: python scripts/smoke_test.py

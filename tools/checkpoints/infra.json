@@ -1,0 +1,5 @@
+﻿{
+    "PromptTable":  "genai-prompt-dev",
+    "ModelTable":  "genai-model-dev",
+    "checkpoint":  "infra-ready"
+}

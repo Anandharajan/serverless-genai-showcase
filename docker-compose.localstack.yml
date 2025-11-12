@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - SERVICES=lambda,dynamodb,apigateway,cloudwatch,iam,stepfunctions,secretsmanager,kms
+      - DEFAULT_REGION=${AWS_REGION}
+      - EDGE_PORT=${LOCALSTACK_EDGE_PORT}
+    ports:
+      - "4566:4566"

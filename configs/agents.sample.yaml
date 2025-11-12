@@ -1,0 +1,11 @@
+defaultGoal: "Summarize readiness"
+playbooks:
+  - name: quick-summary
+    steps:
+      - collect-context
+      - synthesize
+      - publish
+models:
+  default: "primary"
+  overrides:
+    finance: "bedrock-titan"

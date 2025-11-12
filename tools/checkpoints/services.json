@@ -1,0 +1,8 @@
+﻿{
+    "checkpoint":  "services-ready",
+    "tested_endpoints":  [
+                             "/v1/gen-text",
+                             "/v1/rag-query",
+                             "/v1/agent-orchestrate"
+                         ]
+}

@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+serverless_genai_showcase.egg-info/PKG-INFO
+serverless_genai_showcase.egg-info/SOURCES.txt
+serverless_genai_showcase.egg-info/dependency_links.txt
+serverless_genai_showcase.egg-info/requires.txt
+serverless_genai_showcase.egg-info/top_level.txt
+services/__init__.py
+tests/test_admin_service.py
+tests/test_agent_service.py
+tests/test_model_service.py
+tests/test_rag_service.py

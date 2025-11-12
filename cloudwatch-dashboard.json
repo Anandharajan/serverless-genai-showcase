@@ -1,0 +1,51 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "properties": {
+        "title": "API Latency (P50/P95)",
+        "metrics": [
+          [ "AWS/ApiGateway", "Latency", "ApiName", "GenAIHttpApi", { "stat": "p50" } ],
+          [ ".", ".", ".", ".", ".", ".", { "stat": "p95", "color": "#ff9900" } ]
+        ],
+        "region": "${AWS::Region}",
+        "stat": "Average",
+        "period": 60
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "title": "Token usage by model",
+        "metrics": [
+          [ "GenAI/Usage", "TokenUsageByModel", "ModelId", "primary" ]
+        ],
+        "view": "timeSeries",
+        "region": "${AWS::Region}"
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "title": "Agent runtime (p95)",
+        "metrics": [
+          [ "GenAI/Usage", "AgentRuntimeMs", { "stat": "p95" } ]
+        ],
+        "view": "timeSeries",
+        "region": "${AWS::Region}"
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "title": "DynamoDB capacity",
+        "metrics": [
+          [ "AWS/DynamoDB", "ConsumedReadCapacityUnits", "TableName", "${StageName}-PromptHistory" ],
+          [ ".", "ConsumedWriteCapacityUnits", ".", "." ]
+        ],
+        "stat": "Sum",
+        "period": 300
+      }
+    }
+  ]
+}

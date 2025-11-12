@@ -1,0 +1,339 @@
+No current session found, using default AWS::AccountId
+Mounting RagQueryFunction at http://127.0.0.1:3000/rag [POST]
+Mounting ModelTrainerHookFunction at http://127.0.0.1:3000/train [POST]
+Mounting AgentOrchestratorFunction at http://127.0.0.1:3000/agents [POST]
+Mounting GenTextFunction at http://127.0.0.1:3000/text [POST]
+Mounting AdminFunction at http://127.0.0.1:3000/models [POST]
+You can now browse to the above endpoints to invoke your functions. You do not need to restart/reload SAM CLI while working on your functions, changes will be reflected instantly/automatically. If you used sam build before running local commands, you will need to re-run sam build for the changes to be picked up. You only need to restart SAM CLI if you update your AWS SAM template
+ * Tip: There are .env files present. Install python-dotenv to use them.
+2025-11-11 19:54:38 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:3000
+2025-11-11 19:54:38 [33mPress CTRL+C to quit[0m
+Invoking services.functions.gen_text.app.lambda_handler (python3.12)
+Local image was not found.
+Removing rapid images for repo public.ecr.aws/sam/emulation-python3.12
+Building image.......................................................................................................................................................................................................................................................................................................................
+Using local image: public.ecr.aws/lambda/python:3.12-rapid-x86_64.
+
+Mounting C:\Users\owner\Documents\Research\serverless app\.aws-sam\build\GenTextFunction as /var/task:ro,delegated, inside runtime container
+SAM_CONTAINER_ID: 4a2e848d459a8d79143caa869efc9bc0a7b591be3a787f4b5121ea260633a0f0
+START RequestId: 393a7b20-6a2f-4e52-8a91-b9c7c2ee1123 Version: $LATEST
+Creating table resource for table: dev-PromptHistory with endpoint: http://localhost:4566
+Creating table resource for table: dev-ModelMetadata with endpoint: http://localhost:4566
+Scanning table: dev-ModelMetadata with table object: dynamodb.Table(name='dev-ModelMetadata')
+[ERROR] EndpointConnectionError: Could not connect to the endpoint URL: "http://localhost:4566/"
+Traceback (most recent call last):
+  File "/var/task/services/functions/gen_text/app.py", line 14, in lambda_handler
+    result = SERVICE.generate(payload)
+  File "/var/task/services/domain/model_service.py", line 36, in generate
+    model_id = payload.get("modelId") or self._metadata.get_active_model()
+  File "/var/task/services/data/store.py", line 253, in get_active_model
+    models = self.scan()
+  File "/var/task/services/data/store.py", line 179, in scan
+    resp = self._table.scan()
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/factory.py", line 581, in do_action
+    response = action(self, *args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/action.py", line 88, in __call__
+    response = getattr(parent.meta.client, operation_name)(*args, **params)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1060, in _make_api_call
+    http, parsed_response = self._make_request(
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1084, in _make_request
+    return self._endpoint.make_request(operation_model, request_dict)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 119, in make_request
+    return self._send_request(request_dict, operation_model)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 200, in _send_request
+    while self._needs_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 360, in _needs_retry
+    responses = self._event_emitter.emit(
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 412, in emit
+    return self._emitter.emit(aliased_event_name, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 256, in emit
+    return self._emit(event_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 239, in _emit
+    response = handler(**kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 207, in __call__
+    if self._checker(**checker_kwargs):
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 284, in __call__
+    should_retry = self._should_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 320, in _should_retry
+    return self._checker(attempt_number, response, caught_exception)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 363, in __call__
+    checker_response = checker(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 247, in __call__
+    return self._check_caught_exception(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 416, in _check_caught_exception
+    raise caught_exception
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 279, in _do_get_response
+    http_response = self._send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 383, in _send
+    return self.http_session.send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/httpsession.py", line 493, in send
+    raise EndpointConnectionError(endpoint_url=request.url, error=e)
+END RequestId: de781059-ee5b-4590-a04a-887fa572eb24
+REPORT RequestId: de781059-ee5b-4590-a04a-887fa572eb24	Init Duration: 0.04 ms	Duration: 27529.66 ms	Billed Duration: 27530 ms	Memory Size: 256 MB	Max Memory Used: 256 MB	
+
+No Content-Type given. Defaulting to 'application/json'.
+2025-11-11 19:56:17 127.0.0.1 - - [11/Nov/2025 19:56:17] "POST /text HTTP/1.1" 200 -
+Invoking services.functions.rag_query.app.lambda_handler (python3.12)
+Local image is up-to-date
+Using local image: public.ecr.aws/lambda/python:3.12-rapid-x86_64.
+
+Mounting C:\Users\owner\Documents\Research\serverless app\.aws-sam\build\RagQueryFunction as /var/task:ro,delegated, inside runtime container
+SAM_CONTAINER_ID: cbfe9b33217dad7f10abc6bee3f1d9a7a842cd8ef771008e08cefbaf537d724f
+START RequestId: c12a0b28-cca2-45c9-9674-3ebf74c641f2 Version: $LATEST
+Creating table resource for table: dev-ModelMetadata with endpoint: http://localhost:4566
+Creating table resource for table: dev-PromptHistory with endpoint: http://localhost:4566
+Creating table resource for table: dev-RetrievalIndex with endpoint: http://localhost:4566
+Scanning table: dev-RetrievalIndex with table object: dynamodb.Table(name='dev-RetrievalIndex')
+[ERROR] EndpointConnectionError: Could not connect to the endpoint URL: "http://localhost:4566/"
+Traceback (most recent call last):
+  File "/var/task/services/functions/rag_query/app.py", line 14, in lambda_handler
+    result = SERVICE.answer(payload)
+  File "/var/task/services/domain/rag_service.py", line 35, in answer
+    documents: Sequence[Dict[str, Any]] = payload.get("documents") or self._retrieval.top_k(
+  File "/var/task/services/data/store.py", line 309, in top_k
+    return self.list_documents()[:limit]
+  File "/var/task/services/data/store.py", line 297, in list_documents
+    docs = self.scan()
+  File "/var/task/services/data/store.py", line 179, in scan
+    resp = self._table.scan()
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/factory.py", line 581, in do_action
+    response = action(self, *args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/action.py", line 88, in __call__
+    response = getattr(parent.meta.client, operation_name)(*args, **params)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1060, in _make_api_call
+    http, parsed_response = self._make_request(
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1084, in _make_request
+    return self._endpoint.make_request(operation_model, request_dict)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 119, in make_request
+    return self._send_request(request_dict, operation_model)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 200, in _send_request
+    while self._needs_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 360, in _needs_retry
+    responses = self._event_emitter.emit(
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 412, in emit
+    return self._emitter.emit(aliased_event_name, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 256, in emit
+    return self._emit(event_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 239, in _emit
+    response = handler(**kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 207, in __call__
+    if self._checker(**checker_kwargs):
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 284, in __call__
+    should_retry = self._should_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 320, in _should_retry
+    return self._checker(attempt_number, response, caught_exception)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 363, in __call__
+    checker_response = checker(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 247, in __call__
+    return self._check_caught_exception(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 416, in _check_caught_exception
+    raise caught_exception
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 279, in _do_get_response
+    http_response = self._send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 383, in _send
+    return self.http_session.send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/httpsession.py", line 493, in send
+    raise EndpointConnectionError(endpoint_url=request.url, error=e)
+END RequestId: 73c67397-8933-4329-98bb-5805b046938d
+REPORT RequestId: 73c67397-8933-4329-98bb-5805b046938d	Init Duration: 0.06 ms	Duration: 26939.59 ms	Billed Duration: 26940 ms	Memory Size: 256 MB	Max Memory Used: 256 MB	
+
+No Content-Type given. Defaulting to 'application/json'.
+2025-11-11 19:56:53 127.0.0.1 - - [11/Nov/2025 19:56:53] "POST /rag HTTP/1.1" 200 -
+Invoking services.functions.agent_orchestrator.app.lambda_handler (python3.12)
+Using local image: public.ecr.aws/lambda/python:3.12-rapid-x86_64.
+
+Mounting C:\Users\owner\Documents\Research\serverless app\.aws-sam\build\AgentOrchestratorFunction as /var/task:ro,delegated, inside runtime container
+SAM_CONTAINER_ID: 085939ffca3de8e030e568c3192a7b9c12f25679a64a709341ec08ae08a3f4d8
+START RequestId: 6e71d8f1-347b-4cf1-9e9c-101560b7403e Version: $LATEST
+Creating table resource for table: dev-AgentLifecycle with endpoint: http://localhost:4566
+Creating table resource for table: dev-ModelMetadata with endpoint: http://localhost:4566
+Scanning table: dev-ModelMetadata with table object: dynamodb.Table(name='dev-ModelMetadata')
+[ERROR] EndpointConnectionError: Could not connect to the endpoint URL: "http://localhost:4566/"
+Traceback (most recent call last):
+  File "/var/task/services/functions/agent_orchestrator/app.py", line 14, in lambda_handler
+    result = SERVICE.execute(payload)
+  File "/var/task/services/domain/agent_service.py", line 34, in execute
+    model_id = payload.get("modelId") or self._metadata.get_active_model()
+  File "/var/task/services/data/store.py", line 253, in get_active_model
+    models = self.scan()
+  File "/var/task/services/data/store.py", line 179, in scan
+    resp = self._table.scan()
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/factory.py", line 581, in do_action
+    response = action(self, *args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/action.py", line 88, in __call__
+    response = getattr(parent.meta.client, operation_name)(*args, **params)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1060, in _make_api_call
+    http, parsed_response = self._make_request(
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1084, in _make_request
+    return self._endpoint.make_request(operation_model, request_dict)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 119, in make_request
+    return self._send_request(request_dict, operation_model)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 200, in _send_request
+    while self._needs_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 360, in _needs_retry
+    responses = self._event_emitter.emit(
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 412, in emit
+    return self._emitter.emit(aliased_event_name, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 256, in emit
+    return self._emit(event_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 239, in _emit
+    response = handler(**kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 207, in __call__
+    if self._checker(**checker_kwargs):
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 284, in __call__
+    should_retry = self._should_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 320, in _should_retry
+    return self._checker(attempt_number, response, caught_exception)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 363, in __call__
+    checker_response = checker(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 247, in __call__
+    return self._check_caught_exception(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 416, in _check_caught_exception
+    raise caught_exception
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 279, in _do_get_response
+    http_response = self._send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 383, in _send
+    return self.http_session.send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/httpsession.py", line 493, in send
+    raise EndpointConnectionError(endpoint_url=request.url, error=e)
+END RequestId: 40e5fcb7-9eb0-49a4-90e7-2ec274f3d4f9
+REPORT RequestId: 40e5fcb7-9eb0-49a4-90e7-2ec274f3d4f9	Init Duration: 0.02 ms	Duration: 27825.18 ms	Billed Duration: 27826 ms	Memory Size: 256 MB	Max Memory Used: 256 MB	
+
+No Content-Type given. Defaulting to 'application/json'.
+2025-11-11 19:57:23 127.0.0.1 - - [11/Nov/2025 19:57:23] "POST /agents HTTP/1.1" 200 -
+Invoking services.functions.admin.app.lambda_handler (python3.12)
+Using local image: public.ecr.aws/lambda/python:3.12-rapid-x86_64.
+
+Mounting C:\Users\owner\Documents\Research\serverless app\.aws-sam\build\AdminFunction as /var/task:ro,delegated, inside runtime container
+SAM_CONTAINER_ID: 17f848d1dd6c199f6415dc4bed5b46acd8c5af129b04991222c9695dc259f136
+START RequestId: 317b5e32-846c-4735-9ecd-cd34ab8d9082 Version: $LATEST
+Creating table resource for table: dev-ModelMetadata with endpoint: http://localhost:4566
+[ERROR] TypeError: Float types are not supported. Use Decimal types instead.
+Traceback (most recent call last):
+  File "/var/task/services/functions/admin/app.py", line 14, in lambda_handler
+    result = SERVICE.handle(payload)
+  File "/var/task/services/domain/admin_service.py", line 17, in handle
+    model = self._metadata.register_model(payload)
+  File "/var/task/services/data/store.py", line 236, in register_model
+    self.put(model)
+  File "/var/task/services/data/store.py", line 125, in put
+    self._table.put_item(Item=item)
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/factory.py", line 581, in do_action
+    response = action(self, *args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/action.py", line 88, in __call__
+    response = getattr(parent.meta.client, operation_name)(*args, **params)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1019, in _make_api_call
+    api_params = self._emit_api_params(
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1138, in _emit_api_params
+    self.meta.events.emit(
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 412, in emit
+    return self._emitter.emit(aliased_event_name, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 256, in emit
+    return self._emit(event_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 239, in _emit
+    response = handler(**kwargs)
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/transform.py", line 217, in inject_attribute_value_input
+    self._transformer.transform(
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/transform.py", line 289, in transform
+    self._transform_parameters(model, params, transformation, target_shape)
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/transform.py", line 296, in _transform_parameters
+    getattr(self, f'_transform_{type_name}')(
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/transform.py", line 312, in _transform_structure
+    self._transform_parameters(
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/transform.py", line 296, in _transform_parameters
+    getattr(self, f'_transform_{type_name}')(
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/transform.py", line 326, in _transform_map
+    params[key] = transformation(value)
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/types.py", line 114, in serialize
+    dynamodb_type = self._get_dynamodb_type(value)
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/types.py", line 127, in _get_dynamodb_type
+    elif self._is_number(value):
+  File "/var/lang/lib/python3.12/site-packages/boto3/dynamodb/types.py", line 171, in _is_number
+    raise TypeError(
+END RequestId: b7a8357e-0cd8-4f7e-a5d7-1a69f7e7e22e
+REPORT RequestId: b7a8357e-0cd8-4f7e-a5d7-1a69f7e7e22e	Init Duration: 0.04 ms	Duration: 1310.67 ms	Billed Duration: 1311 ms	Memory Size: 256 MB	Max Memory Used: 256 MB	
+
+No Content-Type given. Defaulting to 'application/json'.
+2025-11-11 19:57:27 127.0.0.1 - - [11/Nov/2025 19:57:27] "POST /models HTTP/1.1" 200 -
+Invoking services.functions.admin.app.lambda_handler (python3.12)
+Using local image: public.ecr.aws/lambda/python:3.12-rapid-x86_64.
+
+Mounting C:\Users\owner\Documents\Research\serverless app\.aws-sam\build\AdminFunction as /var/task:ro,delegated, inside runtime container
+SAM_CONTAINER_ID: 4054dd31c8015bf8667e9f69802548c9c321f9429186a9e96fe6001e9caf49a5
+START RequestId: d48ff479-c30a-4d45-901f-b21fc8eb0a33 Version: $LATEST
+Creating table resource for table: dev-ModelMetadata with endpoint: http://localhost:4566
+Scanning table: dev-ModelMetadata with table object: dynamodb.Table(name='dev-ModelMetadata')
+[ERROR] EndpointConnectionError: Could not connect to the endpoint URL: "http://localhost:4566/"
+Traceback (most recent call last):
+  File "/var/task/services/functions/admin/app.py", line 14, in lambda_handler
+    result = SERVICE.handle(payload)
+  File "/var/task/services/domain/admin_service.py", line 36, in handle
+    return {"modelId": self._metadata.get_active_model()}
+  File "/var/task/services/data/store.py", line 253, in get_active_model
+    models = self.scan()
+  File "/var/task/services/data/store.py", line 179, in scan
+    resp = self._table.scan()
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/factory.py", line 581, in do_action
+    response = action(self, *args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/boto3/resources/action.py", line 88, in __call__
+    response = getattr(parent.meta.client, operation_name)(*args, **params)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1060, in _make_api_call
+    http, parsed_response = self._make_request(
+  File "/var/lang/lib/python3.12/site-packages/botocore/client.py", line 1084, in _make_request
+    return self._endpoint.make_request(operation_model, request_dict)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 119, in make_request
+    return self._send_request(request_dict, operation_model)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 200, in _send_request
+    while self._needs_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 360, in _needs_retry
+    responses = self._event_emitter.emit(
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 412, in emit
+    return self._emitter.emit(aliased_event_name, **kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 256, in emit
+    return self._emit(event_name, kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/hooks.py", line 239, in _emit
+    response = handler(**kwargs)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 207, in __call__
+    if self._checker(**checker_kwargs):
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 284, in __call__
+    should_retry = self._should_retry(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 320, in _should_retry
+    return self._checker(attempt_number, response, caught_exception)
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 363, in __call__
+    checker_response = checker(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 247, in __call__
+    return self._check_caught_exception(
+  File "/var/lang/lib/python3.12/site-packages/botocore/retryhandler.py", line 416, in _check_caught_exception
+    raise caught_exception
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 279, in _do_get_response
+    http_response = self._send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/endpoint.py", line 383, in _send
+    return self.http_session.send(request)
+  File "/var/lang/lib/python3.12/site-packages/botocore/httpsession.py", line 493, in send
+    raise EndpointConnectionError(endpoint_url=request.url, error=e)
+END RequestId: 3c53ec2a-083b-41d1-b042-4f9faf64022e
+REPORT RequestId: 3c53ec2a-083b-41d1-b042-4f9faf64022e	Init Duration: 0.05 ms	Duration: 26806.09 ms	Billed Duration: 26807 ms	Memory Size: 256 MB	Max Memory Used: 256 MB	
+
+No Content-Type given. Defaulting to 'application/json'.
+2025-11-11 19:57:56 127.0.0.1 - - [11/Nov/2025 19:57:56] "POST /models HTTP/1.1" 200 -
