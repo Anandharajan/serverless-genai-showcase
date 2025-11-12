@@ -1,5 +1,7 @@
 # Serverless Generative AI Showcase
 
+[![Demo Workflow](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/demo.yml/badge.svg)](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/demo.yml)
+
 ## 🚧 Project Status 🚧
 
 **This project is currently under active development.**
