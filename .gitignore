@@ -2,8 +2,15 @@
 __pycache__/
 .pytest_cache/
 .aws-sam/
+.ruff_cache/
+.mypy_cache/
 .idea/
 *.pyc
+*.egg-info/
+node_modules/
+.coverage
+coverage.xml
+*.log
 samconfig.toml
 !.github/
 .env
