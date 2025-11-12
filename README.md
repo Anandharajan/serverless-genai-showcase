@@ -1,6 +1,8 @@
 # Serverless Generative AI Showcase
 
+[![CI Workflow](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/ci.yml)
 [![Demo Workflow](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/demo.yml/badge.svg)](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/demo.yml)
+[![Deploy Workflow](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/deploy.yml/badge.svg)](https://github.com/Anandharajan/serverless-genai-showcase/actions/workflows/deploy.yml)
 
 ## 🚧 Project Status 🚧
 
@@ -10,6 +12,11 @@
 - Infrastructure (`infra-architect`) and service layers (`service-engineer`) are complete and exercised directly through the domain services using the `GENAI_LOCAL_ONLY=1` JSON stores for fast feedback.
 - Model registry flows now auto-activate newly registered adapters by default, and pytest coverage guards both the automatic and opt-out paths.
 - SAM builds succeed locally; linting and tests run via `python -m ruff` and `python -m pytest`, keeping the repo CI-ready once the API comes online.
+
+**Automation status**
+- `ci` keeps lint/tests green on every push.
+- `demo` builds + runs the SAM API in GitHub Actions and executes the smoke test suite.
+- `deploy` is wired for future AWS promotion once the release checklist is complete.
 
 **Next steps to complete the project**
 - Bring up LocalStack (or provision real AWS tables) and run `sam local start-api --env-vars infra/env.dev.json` so the HTTP API can be smoke tested end-to-end rather than through direct service calls.
