@@ -99,7 +99,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref GenAIHttpApi
-            Path: /text
+            Path: /v1/gen-text
             Method: POST
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -133,7 +133,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref GenAIHttpApi
-            Path: /rag
+            Path: /v1/rag-query
             Method: POST
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -167,7 +167,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref GenAIHttpApi
-            Path: /agents
+            Path: /v1/agent-orchestrate
             Method: POST
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -201,7 +201,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref GenAIHttpApi
-            Path: /train
+            Path: /v1/train
             Method: POST
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -235,7 +235,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref GenAIHttpApi
-            Path: /models
+            Path: /v1/models
             Method: POST
       Policies:
         - AWSLambdaBasicExecutionRole
