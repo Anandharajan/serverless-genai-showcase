@@ -59,7 +59,7 @@ def main():
     try:
         response = requests.post(
             f"{base_url}/v1/rag-query",
-            json={"query": "What is serverless AI?", "requestId": f"{request_id}-rag"},
+            json={"question": "What is serverless AI?", "requestId": f"{request_id}-rag"},
             headers={"Content-Type": "application/json"}
         )
         response.raise_for_status()
