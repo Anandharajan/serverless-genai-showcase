@@ -27,7 +27,9 @@ def should_skip_dynamo() -> bool:
     flag = os.environ.get("SMOKE_SKIP_DYNAMO", "").lower()
     if flag in {"1", "true", "yes"}:
         return True
-    return os.environ.get("GENAI_LOCAL_ONLY") == "1"
+    if os.environ.get("GENAI_LOCAL_ONLY") == "1":
+        return True
+    return os.environ.get("AWS_SAM_LOCAL", "").lower() in {"1", "true", "yes"}
 
 
 def main():

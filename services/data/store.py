@@ -10,6 +10,13 @@ from uuid import uuid4
 
 from services.common import env
 
+
+def _is_local_mode() -> bool:
+    flag = os.getenv("GENAI_LOCAL_ONLY")
+    if flag is not None and flag != "":
+        return flag == "1" or flag.lower() in {"true", "yes"}
+    return os.getenv("AWS_SAM_LOCAL", "").lower() in {"true", "1", "yes"}
+
 try:
     import boto3  # type: ignore
 
@@ -18,11 +25,7 @@ except Exception:  # pragma: no cover - boto3 is optional for local tests
 
 
 def _dynamo_table(table_name: str):
-
-
-    if os.getenv("GENAI_LOCAL_ONLY") == "1":
-
-
+    if _is_local_mode():
         return None
 
 
