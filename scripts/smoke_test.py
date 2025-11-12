@@ -74,7 +74,7 @@ def main():
     try:
         response = requests.post(
             f"{base_url}/v1/agent-orchestrate",
-            json={"task": "Plan a trip to the moon", "requestId": f"{request_id}-agent"},
+            json={"goal": "Plan a trip to the moon", "requestId": f"{request_id}-agent"},
             headers={"Content-Type": "application/json"}
         )
         response.raise_for_status()
