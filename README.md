@@ -79,22 +79,22 @@ Production-minded, serverless reference implementation that highlights LLM adapt
 
 
 
-## Builder's blog-style walkthrough
+## Research blog: Field notes from the GenAI platform lab
 
-### 1. Framing the challenge
-Treat the repo like a real engagement from a platform team: ship a reusable Generative AI foundation that proves the ability to move from idea to AWS production patterns. That means a single place that talks about people, process, and tech, not just "here's some Lambda code".
+### 1. Hypothesis: reusable GenAI platforms beat one-off demos
+We framed this repository as a research log for platform teams. The idea: if adapters, governance, and infrastructure co-exist, a team can move from hackathon to production without rewriting the stack. That is why docs, IaC, and services live side-by-side.
 
-### 2. Architecting like production
-With the problem framed, the architecture diagram above became the contract. API Gateway fans out to purpose-built Lambdas, DynamoDB owns durability, and a Step Functions stub represents long-running training. Every resource, role, and environment variable lives in `infra/template.yaml`, so reviewers can diff exactly what reaches AWS.
+### 2. Experimental setup: API-first, IaC everywhere
+API Gateway is the single ingress that fans out to text, RAG, agent, admin, and training Lambdas. Every table, policy, and environment variable sits in `infra/template.yaml`, mirroring a “Methods” section in a paper so reviewers can diff the entire system. For quick iterations, the data layer automatically falls back to local JSON stores via `GENAI_LOCAL_ONLY=1`.
 
-### 3. Building & iterating
-Adapters and domain services came first so the handlers stay thin. The mock adapter keeps demo runs deterministic while exposing seams for Bedrock or OpenAI. Data stores automatically fall back to local JSON, letting `sam local start-api` run without spinning up LocalStack. Automation scripts wrap common tasks (build, test, deploy) the same way a production CI/CD stack would.
+### 3. Results: deterministic adapters + rapid loops
+Adapters wrap a deterministic mock model today, which keeps run outputs reproducible while leaving seams for Bedrock/OpenAI. Domain services own the logic, handlers stay thin, and the SAM demo workflow drives `/v1/gen-text`, `/v1/rag-query`, and `/v1/agent-orchestrate` end-to-end. Researchers can paste a smoke-test run log and colleagues will get the same answer.
 
-### 4. Operating & governing
-Production readiness means observability and accountability. X-Ray tracing, structured logging, and custom CloudWatch metrics (`GenAI/Usage`) ship by default. Governance artifacts - model card, NIST mapping, EU AI Act notes, Responsible AI checklist - live in `docs/` so security and legal reviewers have something concrete. There is also a CloudWatch dashboard template ready to import after deploy.
+### 4. Observability + governance insights
+Instrumentation carries equal weight: X-Ray, structured logs, and `GenAI/Usage` metrics ship by default, and the CloudWatch dashboard template is ready after deploy. Meanwhile the `docs/` folder acts as the governance appendix—model card, NIST mapping, EU AI Act notes, and Responsible AI checklist give security/legal partners something concrete.
 
-### 5. Outcomes & next experiments
-Running the `/agents` endpoint locally (with `GENAI_LOCAL_ONLY=1`) produces sharable outputs; for example, run `4854ec6d-5441-4801-ab3b-2d1c1214e87f` completed a four-step plan for a student smart-campus assistant. From here the roadmap is clear: swap in a managed LLM adapter, extend the retrieval store to OpenSearch or Pinecone, and connect the Step Functions hook to a real fine-tune workflow. The repo shows exactly how to lead that journey in production.
+### 5. Follow-up studies
+With CI and demo badges proving the workflows stay green, the next studies write themselves: point retrieval at OpenSearch, wire the Step Functions hook to a real fine-tune job, or swap the mock adapter for a Bedrock invocation. Each change is measurable, so the repository evolves like a research program, not another throwaway demo.
 
 
 
